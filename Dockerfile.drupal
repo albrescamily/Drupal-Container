@@ -1,0 +1,25 @@
+# Usando uma imagem base do Drupal
+FROM drupal:latest
+
+RUN apt-get update && apt-get install -y default-mysql-client
+
+# Instalar o Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Instalar o Drush globalmente
+RUN composer require drush/drush
+
+RUN drush --version 
+
+COPY ./scripts/configure.sh /opt/drupal/
+
+COPY ./scripts/create-node.sh /opt/drupal/
+
+RUN chmod +x /opt/drupal/configure.sh
+RUN chmod +x /opt/drupal/create-node.sh
+
+
+#ENTRYPOINT ["/opt/drupal/configure.sh"]
+
+CMD ["apache2-foreground"]
+
